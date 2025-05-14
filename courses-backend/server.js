@@ -39,7 +39,7 @@ app.get('/courses', (req, res) => {
         );
     }
 
-    res.json(data.courses);
+    res.json(courses);
 });
 
 // Get a course by ID
