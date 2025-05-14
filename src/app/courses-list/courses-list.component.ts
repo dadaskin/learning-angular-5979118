@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CourseCardComponent } from '../course-card/course-card.component';
 import { Course } from '../models/course.model';
 import { CourseService } from '../services/course.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-courses-list',
@@ -14,13 +15,21 @@ export class CoursesListComponent implements OnInit {
   wishlist: Course[] = [];
   courses: Course[] = [];
 
-  constructor(private courseService: CourseService) {
+  constructor(private courseService: CourseService, private route: ActivatedRoute, private router: Router) {
 
   }
 
   ngOnInit(): void {
-    this.courseService.getCourses().subscribe({
+    this.route.queryParamMap.subscribe(params => {
+      const desc = params.get('description');
+      this.loadCourses(desc);
+    });
+  }
+
+  loadCourses(description: string | null) {
+    this.courseService.getCourses(description).subscribe({
       next: (data: Course[]) => {
+        console.log(`load Courses with desc: ${description} gets: ${data}`);
         this.courses = data;
       },
       error: (err) => {
@@ -28,6 +37,7 @@ export class CoursesListComponent implements OnInit {
       }
     });
   }
+
 
   onCourseBooked(course: Course): void {
     console.log('Parent heard about booking:', course.title);
